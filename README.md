@@ -104,16 +104,21 @@ Measured on one complete run: a 9-screen Flutter app on a Redmi Note 8 Pro (Andr
 | Measurements in the report | 39 (9 opens, 7 scrolls, 23 taps) |
 | Full sweeps on the device | 2 (the second one repeats only the flagged taps) |
 
-| Tokens | Count |
-|---|---|
-| Output | 35.5 K |
-| Input, not cached | 162 |
-| Cache writes | 144 K |
-| Cache reads | 9.05 M |
-| **Total** | **9.23 M** (98 % cache reads) |
-| API calls | 69, no subagents |
+| Tokens | Count | Estimated cost (Opus 5.5 API rates) |
+|---|---|---|
+| New tokens: output | 35.5 K | $0.71 |
+| New tokens: input written to the cache (1-hour TTL) | 144 K | $1.15 |
+| New tokens: uncached input | 162 | < $0.01 |
+| Cache reads | 9.05 M | $1.81 |
+| **Total** | **9.23 M**, of which ~180 K new | **≈ $3.70** |
+| API calls | 69, no subagents | |
 
-Expect the time and tokens to grow with the number of screens and tappable controls. A first run also pays for writing the sweep test. Later runs reuse that test and go straight to measuring.
+The cost uses the Anthropic API list prices for Claude Opus 5.5 ($4 / MTok input, $20 / MTok output, $8 / MTok for 1-hour cache writes, $0.20 / MTok cache reads). On a Claude subscription a run uses your plan's limits instead of being billed per token. Cache reads are cheap per token, but every turn re-reads the conversation, so they still make up about half of the cost.
+
+**What changes these numbers**
+
+- **The app.** Measuring took 5 min 42 s here. It grows with the number of screens and tappable controls, and with how long the app takes to build. A first run also pays for writing the sweep test; later runs reuse it and go straight to measuring.
+- **The model.** The skill runs on whatever model your Claude Code session uses; switch it with `/model`. The same token counts at Claude Sonnet 5.5 rates ($2 / $10 per MTok, $0.20 cache reads) come to about $2.75. A different model will not use exactly the same tokens, so treat that as a rough guide.
 
 ## How the verdict works
 
