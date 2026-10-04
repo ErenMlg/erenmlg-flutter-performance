@@ -60,7 +60,7 @@ Say these to the user in a sentence or two with the results — they are why the
    - single scenario: the finder for the widget under test, the interaction and the `reportKey`.
 5. `flutter analyze` the new files until clean.
 
-Test data (`ensureData`): decide what each screen needs to show real content — a detail page needs one item, a list needs as many rows as a real user has (5 rows won't show list jank). Check at runtime and add only what is missing, through the app's own data layer (repository/DAO, the way the project's tests do; never by typing into forms), with names that read as test data ("Perf test goal"). Return a cleanup that removes exactly what was added. Never type real credentials: a screen behind a login uses the project's test account or is skipped with the reason.
+Test data (`ensureData`): decide what each screen needs to show real content — a detail page needs one item, a list needs as many rows as a real user has (5 rows won't show list jank). Check at runtime and add only what is missing, through the app's own data layer (repository/DAO, the way the project's tests do; never by typing into forms), with names that read as test data ("Perf test item"). Return a cleanup that removes exactly what was added. Never type real credentials: a screen behind a login uses the project's test account or is skipped with the reason.
 
 What keeps a trace honest (already built into the templates — keep it):
 - `framePolicy = benchmarkLive`: frames are scheduled like on a real device; otherwise `pump()` injects artificial frames.
@@ -87,7 +87,7 @@ Use a long timeout: the first build takes 1–2 minutes, a sweep without taps ab
 Keep device time down — every full sweep costs ~2 minutes without taps, and re-running it to debug one screen was the biggest waste in real runs:
 1. Run the full sweep once. It measures every screen's open and scroll and then taps every safe target on each screen (`<screen>_tap<n>_<widget kind>`); this pass takes a few minutes longer because of the taps.
 2. For every `SWEEP skipped <key>` line, read the matching `SWEEP visible <key>` line (the texts on screen when it failed), fix that entry's finders, and re-run **only the fixed screens**: add `--dart-define=PERF_ONLY=<key1>,<key2>`. Repeat until they pass; never re-run the whole sweep to debug one screen, and don't spend a run just to see what is on screen.
-3. Run the full sweep a second time, repeating only the taps that came out WARN, FAIL or UNSURE in the summary (after one run every flagged tap is UNSURE): add `--dart-define=PERF_TAP_KEYS=<tap reportKeys>` (the keys as the summary prints them, e.g. `budget_remaining_tap3_iconbutton`), or `--dart-define=PERF_TAPS=false` when no tap was flagged. Passing tap keys takes this pass from ~8 minutes to ~2–3. Every open and scroll now has two runs and no flagged tap rests on one measurement.
+3. Run the full sweep a second time, repeating only the taps that came out WARN, FAIL or UNSURE in the summary (after one run every flagged tap is UNSURE): add `--dart-define=PERF_TAP_KEYS=<tap reportKeys>` (the keys as the summary prints them, e.g. `cart_tap3_iconbutton`), or `--dart-define=PERF_TAPS=false` when no tap was flagged. Passing tap keys takes this pass from ~8 minutes to ~2–3. Every open and scroll now has two runs and no flagged tap rests on one measurement.
 
 `PERF_ONLY` runs are saved as `<key>__isolated`: a lone screen on a cool, idle phone measures faster than the same screen deep in a sweep, so isolated runs only prove a finder works. Never use them as a baseline, as a verdict, or in the report; the scripts refuse to mix them with sweep runs.
 
@@ -153,7 +153,7 @@ It lists the events that took the most time, their counts and ms per frame (incl
 
 ```json
 {
-  "app": "Monysa", "device": "Redmi Note 8 Pro · Android 11 · mt6785", "fps": 60, "backend": "Impeller (OpenGLES)",
+  "app": "My App", "device": "Redmi Note 8 Pro · Android 11 · mt6785", "fps": 60, "backend": "Impeller (OpenGLES)",
   "deviceProfile": {"CPU": "8 cores, up to 2.05 GHz", "GPU": "Mali-G76 MC4, OpenGL ES 3.2", "RAM": "6 GB", "Screen": "1080×2340, 440 dpi", "Refresh rate": "60 Hz (max 60 Hz)", "State": "charging, 29 °C, battery saver off, not throttled"},
   "screens": [{
     "name": "Settings — scroll", "interaction": "fling the list down and up", "kind": "scroll",
@@ -165,7 +165,7 @@ It lists the events that took the most time, their counts and ms per frame (incl
   }],
   "issues": [{"title": "…", "why": "…", "evidence": "…", "screens": ["Settings — scroll"],
               "location": "lib/x.dart:42", "fix": "…", "expect": "…", "prompt": "…"}],
-  "seeded": [{"what": "1 goal \"Perf test goal\"", "screen": "Goal detail", "deleted": true}],
+  "seeded": [{"what": "1 item \"Perf test item\"", "screen": "Item detail", "deleted": true}],
   "skippedTaps": [{"screen": "Settings", "label": "Reset all data", "reason": "destructive (\"reset\")"}],
   "fixPrompt": "…"
 }
