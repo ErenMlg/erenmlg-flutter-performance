@@ -1,0 +1,16 @@
+{
+  "name": "erenmlg",
+  "owner": {
+    "name": "Eren Mollaoglu"
+  },
+  "metadata": {
+    "description": "Claude Code skills by Eren Mollaoglu: Flutter performance testing."
+  },
+  "plugins": [
+    {
+      "name": "erenmlg-flutter-performance",
+      "source": "./",
+      "description": "Measure Flutter jank on a real device and get an HTML report of the screens that stutter."
+    }
+  ]
+}
