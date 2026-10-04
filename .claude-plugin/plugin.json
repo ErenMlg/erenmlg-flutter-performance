@@ -1,7 +1,7 @@
 {
   "name": "erenmlg-flutter-performance",
   "displayName": "Flutter Performance Tester",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Measures Flutter jank on a real Android device and writes an English HTML report of the screens that stutter, with evidence, code locations and fix prompts. Never edits app code.",
   "author": { "name": "Eren Mollaoglu" },
   "license": "MIT",
