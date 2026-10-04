@@ -13,6 +13,7 @@ A [Claude Code](https://code.claude.com) skill that finds jank in a Flutter app 
 - [Quick start](#quick-start)
 - [How it works](#how-it-works)
 - [The report](#the-report)
+- [Time and token usage](#time-and-token-usage)
 - [How the verdict works](#how-the-verdict-works)
 - [What it writes into your project](#what-it-writes-into-your-project)
 - [Using the scripts on their own](#using-the-scripts-on-their-own)
@@ -85,6 +86,39 @@ After you start it, the skill does the rest without commands from you:
 - **Not tapped / test data.** Which controls were skipped on purpose and what data was added.
 
 After you apply a fix, run the skill again. It compares the new runs with the earlier ones and marks each fix as *worked*, *made it worse* or *no effect*.
+
+## Time and token usage
+
+Measured on one complete run: a 9-screen Flutter app on a Redmi Note 8 Pro (Android 11, 60 Hz), with Claude Opus 5.5. The skill ran end to end without any input from the user.
+
+| Phase | Time |
+|---|---|
+| Prepare: device checks, read the app, write the sweep test | 4 min 44 s |
+| Measure: build plus two full sweeps on the phone | 5 min 42 s |
+| Analyze and write the report | 2 min 20 s |
+| **Total** | **12 min 46 s** |
+
+| What was measured | |
+|---|---|
+| Screens | 9 |
+| Measurements in the report | 39 (9 opens, 7 scrolls, 23 taps) |
+| Full sweeps on the device | 2 (the second one repeats only the flagged taps) |
+
+| Tokens | Count | Estimated cost (Opus 5.5 API rates) |
+|---|---|---|
+| New tokens: output | 35.5 K | $0.71 |
+| New tokens: input written to the cache (1-hour TTL) | 144 K | $1.15 |
+| New tokens: uncached input | 162 | < $0.01 |
+| Cache reads | 9.05 M | $1.81 |
+| **Total** | **9.23 M**, of which ~180 K new | **≈ $3.70** |
+| API calls | 69, no subagents | |
+
+The cost uses the Anthropic API list prices for Claude Opus 5.5 ($4 / MTok input, $20 / MTok output, $8 / MTok for 1-hour cache writes, $0.20 / MTok cache reads). On a Claude subscription a run uses your plan's limits instead of being billed per token. Cache reads are cheap per token, but every turn re-reads the conversation, so they still make up about half of the cost.
+
+**What changes these numbers**
+
+- **The app.** Measuring took 5 min 42 s here. It grows with the number of screens and tappable controls, and with how long the app takes to build. A first run also pays for writing the sweep test; later runs reuse it and go straight to measuring.
+- **The model.** The skill runs on whatever model your Claude Code session uses; switch it with `/model`. The same token counts at Claude Sonnet 5.5 rates ($2 / $10 per MTok, $0.20 cache reads) come to about $2.75. A different model will not use exactly the same tokens, so treat that as a rough guide.
 
 ## How the verdict works
 
