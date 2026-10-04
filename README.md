@@ -13,6 +13,7 @@ A [Claude Code](https://code.claude.com) skill that finds jank in a Flutter app 
 - [Quick start](#quick-start)
 - [How it works](#how-it-works)
 - [The report](#the-report)
+- [Time and token usage](#time-and-token-usage)
 - [How the verdict works](#how-the-verdict-works)
 - [What it writes into your project](#what-it-writes-into-your-project)
 - [Using the scripts on their own](#using-the-scripts-on-their-own)
@@ -85,6 +86,34 @@ After you start it, the skill does the rest without commands from you:
 - **Not tapped / test data.** Which controls were skipped on purpose and what data was added.
 
 After you apply a fix, run the skill again. It compares the new runs with the earlier ones and marks each fix as *worked*, *made it worse* or *no effect*.
+
+## Time and token usage
+
+Measured on one complete run: a 9-screen Flutter app on a Redmi Note 8 Pro (Android 11, 60 Hz), with Claude Opus 5.5. The skill ran end to end without any input from the user.
+
+| Phase | Time |
+|---|---|
+| Prepare: device checks, read the app, write the sweep test | 4 min 44 s |
+| Measure: build plus two full sweeps on the phone | 5 min 42 s |
+| Analyze and write the report | 2 min 20 s |
+| **Total** | **12 min 46 s** |
+
+| What was measured | |
+|---|---|
+| Screens | 9 |
+| Measurements in the report | 39 (9 opens, 7 scrolls, 23 taps) |
+| Full sweeps on the device | 2 (the second one repeats only the flagged taps) |
+
+| Tokens | Count |
+|---|---|
+| Output | 35.5 K |
+| Input, not cached | 162 |
+| Cache writes | 144 K |
+| Cache reads | 9.05 M |
+| **Total** | **9.23 M** (98 % cache reads) |
+| API calls | 69, no subagents |
+
+Expect the time and tokens to grow with the number of screens and tappable controls. A first run also pays for writing the sweep test. Later runs reuse that test and go straight to measuring.
 
 ## How the verdict works
 
